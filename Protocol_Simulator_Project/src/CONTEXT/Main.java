@@ -18,6 +18,9 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Machine mA = new Machine("Maquina A", 0,0);
+        Machine mB = new Machine("Maquina B", 0,0);
+        
         JFrameMain windowProtocolSimulator = new JFrameMain();
         windowProtocolSimulator.setVisible(true);
         

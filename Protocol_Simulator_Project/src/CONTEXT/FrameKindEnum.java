@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package PROTOCOLS;
+package CONTEXT;
 
 /**
  *
  * @author yeico
  */
-public enum EnumEventType {
-    
+/* frame kind definition */
+public enum FrameKindEnum {
+    DATA,
+    ACK,
+    NAK 
 }
