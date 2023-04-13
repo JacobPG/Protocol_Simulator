@@ -7,6 +7,7 @@ package PROTOCOLS;
 
 import CONTEXT.Frame;
 import CONTEXT.Packet;
+import static PROTOCOLS.EventTypeEnum.FRAME_ARRIVAL;
 
 /**
  *
@@ -29,6 +30,9 @@ public class Protocol {
     /* Wait for an event to happen; return its type in event. */
     public void wait_for_event(EventTypeEnum event) {
         // implementación de la función
+        if(event == null){
+            event = EventTypeEnum.FRAME_ARRIVAL;
+        }
     }
 
     /* Fetch a packet from the network layer for transmission on the channel. */
@@ -38,17 +42,21 @@ public class Protocol {
 
     /* Deliver information from an inbound frame to the network layer. */
     public void to_network_layer(Packet p) {
-        // implementación de la función
+        packet.information = p.information;
+        
     }
 
     /* Go get an inbound frame from the physical layer and copy it to r. */
     public void from_physical_layer(Frame r) {
-        // implementación de la función
+        //Obtenga un marco entrante de la capa física y cópielo en r.
+        r = frame;
+        //return canal fisico 
+        
     }
 
     /* Pass the frame to the physical layer for transmission. */
     public void to_physical_layer(Frame s) {
-        // implementación de la función
+        frame = s;
     }
 
     /* Start the clock running and enable the timeout event. */

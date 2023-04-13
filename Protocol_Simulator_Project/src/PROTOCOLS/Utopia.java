@@ -7,6 +7,7 @@ package PROTOCOLS;
 
 import CONTEXT.Frame;
 import CONTEXT.Packet;
+import static PROTOCOLS.EventTypeEnum.FRAME_ARRIVAL;
 
 /**
  *
@@ -23,12 +24,19 @@ public class Utopia extends Protocol{
         Packet buffer = new Packet();
         while(true){
             from_network_layer(buffer); //go get something to send
-            s.info = packet; /* copy it into s for transmission */
+            s.info = buffer; /* copy it into s for transmission */
             to_physical_layer(s); /* send it on its way */
         }
     }
     //void input
     public void receiver1(){
+        Frame r = new Frame();
+	EventTypeEnum event = null; /* filled in by wait, but not used here */
+	while (true) {
+            wait_for_event(event); /* only possibility is frame arrival */
+            from_physical_layer(r); /* go get the inbound frame */ //de la capa fisica nos van a pasar el frame
+            to_network_layer(r.info); /* pass the data to the network layer */
+	}
         
     }
     
