@@ -35,14 +35,10 @@ public class Utopia extends Protocol{
         while(running){
             System.out.println("[SENDER]");
             
-            System.out.println("Buffer antes:"+buffer.information);
-            
             from_network_layer(buffer); //go get something to send
-            System.out.println("Paquete a enviar: " + buffer.information);
-            s.info = buffer; /* copy it into s for transmission */
-            to_physical_layer(s); /* send it on its way */
             
-            System.out.println("------------\n"+this.frame.info.information);
+            s.info = buffer; /* copy it into s for transmission */
+            to_physical_layer(s); /* send it on its way */        
             
             try {
                 Random random = new Random();
