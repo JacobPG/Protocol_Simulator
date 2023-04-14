@@ -57,6 +57,7 @@ public class JFrameMain extends javax.swing.JFrame {
     private JButton nextButton = new JButton();
     private JButton backButton = new JButton();
     private JPanel panel = new JPanel();
+    private MyThread thread;
     private int index = 0; //Determinate the Jframe that use our Project
     
     
@@ -185,7 +186,8 @@ public class JFrameMain extends javax.swing.JFrame {
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                startSimulation(protocolPanel, framePanel3);
+                startButton.setEnabled(false); // Deshabilitar el botón
+                startSimulation(protocolPanel, framePanel3, startButton);
             }
         });
         
@@ -194,7 +196,7 @@ public class JFrameMain extends javax.swing.JFrame {
         stopButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                stopSimulation(protocolPanel, framePanel3);
+                stopSimulation();
             }
         });
         JButton resumeButton = new JButton("To resume simulation");
@@ -202,7 +204,7 @@ public class JFrameMain extends javax.swing.JFrame {
         resumeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                toResumeSimulation(protocolPanel, framePanel3);
+                toResumeSimulation();
             }
         });
         
@@ -215,9 +217,10 @@ public class JFrameMain extends javax.swing.JFrame {
         protocolPanel.setBounds(10, 10, frameProtocols[0].getWidth()-35, frameProtocols[0].getHeight()-60);
         protocolPanel.setBackground(Color.white);
         protocolPanel.add(titleLabel);
+        protocolPanel.add(framePanel3);
         protocolPanel.add(framePanel);
         protocolPanel.add(framePanel2);
-        protocolPanel.add(framePanel3);
+        
         protocolPanel.add(machineA);
         protocolPanel.add(machineB);
         protocolPanel.add(buttonsPanel);
@@ -225,10 +228,11 @@ public class JFrameMain extends javax.swing.JFrame {
         return protocolPanel;
     }
     
-    public void startSimulation(JPanel refProtocolPanel, JPanel refFramePanel){
-        System.out.println("aa");
-        MyThread hilo = new MyThread(100, refProtocolPanel, refFramePanel,this);
-        hilo.start();
+    public void startSimulation(JPanel refProtocolPanel, JPanel refFramePanel3,JButton startButton){
+        refFramePanel3.setBounds(205, 125, 50, 25);
+        thread = new MyThread(100, refProtocolPanel, refFramePanel3, startButton);
+        thread.startMyThread();
+        
         //sender ->consola
         /*Sending packet [Sender]
 Info in frame: 0110101000010110*/
@@ -240,13 +244,15 @@ Info in frame: 0110101000010110*/
         //se cambia interfaz
         // se vuelve cambiar interfaz nuetro
     }
-    public void stopSimulation(JPanel refProtocolPanel, JPanel refFramePanel){
+    public void stopSimulation(){
         System.out.println("stop");
+        thread.finish();
         
         
     }
-    public void toResumeSimulation(JPanel refProtocolPanel, JPanel refFramePanel){
+    public void toResumeSimulation(){
         System.out.println("to resume");
+        thread.startMyThread();
         
     }
     

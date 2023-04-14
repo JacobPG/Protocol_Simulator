@@ -8,10 +8,10 @@
 package GUI;
 
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
+import javax.swing.JButton;
 import javax.swing.JPanel;
+
+
 
 /**
  *
@@ -21,27 +21,29 @@ import javax.swing.JPanel;
 public class MyThread extends Thread{
     private int speed;
     private boolean execute = false;
-    public JPanel mainPanel;
-    public JPanel framePanel;
-    public JFrameMain mainFrame;
+    private JPanel protocolPanel;
+    private JPanel framePanel;
+    private JButton startButton;
 
-    public MyThread(int speed, JPanel mainPanel, JPanel framePanel, JFrameMain mainFrame) {
+    public MyThread(int speed, JPanel protocolPanel, JPanel framePanel, JButton startButton) {
         this.speed = speed;
-        this.mainPanel = mainPanel;
+        this.protocolPanel = protocolPanel;
         this.framePanel = framePanel;
-        this.mainFrame = mainFrame;
+        this.startButton = startButton;
     }
     
     @Override
     public void run(){
         try{
             while(execute){
-                System.out.println("animacion");
-//                int x = framePanel.getBounds().x;
-//                framePanel.setBounds(x+10, framePanel.getBounds().y, framePanel.getBounds().width, framePanel.getBounds().height);
-//                mainPanel.updateUI();
-                mainFrame.setBackground(Color.yellow);
-                mainFrame.repaint();
+                protocolPanel.remove(framePanel);
+                framePanel.setBounds(framePanel.getX()+10, framePanel.getY(), framePanel.getWidth(), framePanel.getHeight());
+                protocolPanel.add(framePanel,0);
+                protocolPanel.updateUI();
+                if(framePanel.getX()>=725){
+                    execute=false;
+                    startButton.setEnabled(true);
+                }
                 sleep(speed);
             }
         }
