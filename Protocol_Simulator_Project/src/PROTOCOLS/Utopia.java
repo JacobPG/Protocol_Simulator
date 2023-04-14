@@ -34,14 +34,20 @@ public class Utopia extends Protocol{
         Packet buffer = new Packet("");
         while(running){
             System.out.println("[SENDER]");
+            
+            System.out.println("Buffer antes:"+buffer.information);
+            
             from_network_layer(buffer); //go get something to send
-            System.out.println("paquete a enviar: " + buffer.information);
+            System.out.println("Paquete a enviar: " + buffer.information);
             s.info = buffer; /* copy it into s for transmission */
             to_physical_layer(s); /* send it on its way */
+            
+            System.out.println("------------\n"+this.frame.info.information);
+            
             try {
                 Random random = new Random();
                 int numeroAleatorio = random.nextInt(5001) + 2000;
-                sleep(numeroAleatorio);
+                sleep(5000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
             }  
@@ -53,12 +59,14 @@ public class Utopia extends Protocol{
 	EventTypeEnum event = null; /* filled in by wait, but not used here */
 	while (running) {
             wait_for_event(event); /* only possibility is frame arrival */
-            System.out.println("[RECIEVER] FRAME ARRIVAL");
-            from_physical_layer(r); /* go get the inbound frame */ //de la capa fisica nos van a pasar el frame
+            
+            r= from_physical_layer(r); /* go get the inbound frame */ //de la capa fisica nos van a pasar el frame
+            
             if(r.info==null){
                 System.out.println("fallo");
                 return;
             }
+            
             to_network_layer(r.info); /* pass the data to the network layer */
             System.out.println("[RECIEVER]: "+ super.packet.information);
 	} 

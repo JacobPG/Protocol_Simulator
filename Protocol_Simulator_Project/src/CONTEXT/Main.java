@@ -28,8 +28,11 @@ public class Main {
             //Machine mB = new Machine("Maquina B", 0,0);
             
             Utopia utopia = new Utopia();
+            
             ProtocolThread utopiaProtocolSender = new ProtocolThread(100, utopia,0);
+            
             utopiaProtocolSender.startProtocol();
+            
             ProtocolThread utopiaProtocolReciever = new ProtocolThread(100, utopia,1);
             utopiaProtocolReciever.startProtocol();
             
