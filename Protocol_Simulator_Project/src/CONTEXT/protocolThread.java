@@ -9,10 +9,6 @@ package CONTEXT;
  *
  * @author yeico
  */
-public class Packet {
-    public String information;
-
-    public Packet(String information) {
-        this.information = information;
-    }  
+public class protocolThread {
+    
 }

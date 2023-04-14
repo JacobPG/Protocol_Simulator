@@ -1,5 +1,8 @@
 package CONTEXT;
 import GUI.JFrameMain;
+import PROTOCOLS.Protocol;
+import PROTOCOLS.ProtocolThread;
+import PROTOCOLS.Utopia;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,18 +24,23 @@ public class Main {
     public static void main(String[] args) {
         try {
             // TODO code application logic here
-            Machine mA = new Machine("Maquina A", 0,0);
-            Machine mB = new Machine("Maquina B", 0,0);
+            //Machine mA = new Machine("Maquina A", 0,0);
+            //Machine mB = new Machine("Maquina B", 0,0);
             
-            JFrameMain windowProtocolSimulator = new JFrameMain();
-            windowProtocolSimulator.setVisible(true);
+            Utopia utopia = new Utopia();
+            ProtocolThread utopiaProtocolSender = new ProtocolThread(100, utopia,0);
+            utopiaProtocolSender.startProtocol();
+            ProtocolThread utopiaProtocolReciever = new ProtocolThread(100, utopia,1);
+            utopiaProtocolReciever.startProtocol();
+            
+            //p.sender1();
+            //p.receiver1();
+           
+            //JFrameMain windowProtocolSimulator = new JFrameMain();
+            //windowProtocolSimulator.setVisible(true);
         } catch (SecurityException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchFieldException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         

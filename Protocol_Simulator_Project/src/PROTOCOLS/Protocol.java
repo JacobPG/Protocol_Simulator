@@ -6,20 +6,25 @@
 package PROTOCOLS;
 
 import CONTEXT.Frame;
+import CONTEXT.FrameKindEnum;
 import CONTEXT.Packet;
 import static PROTOCOLS.EventTypeEnum.FRAME_ARRIVAL;
+import static java.lang.Thread.sleep;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author yeico
  */
-public class Protocol {
+public class Protocol extends Thread{
     Frame frame;
     int MAX_SEQ;
     EventTypeEnum eventType;
     int seq_nr;
     Packet packet;
-
+   
     public Protocol(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         this.frame = frame;
         this.MAX_SEQ = MAX_SEQ;
@@ -27,17 +32,31 @@ public class Protocol {
         this.seq_nr = seq_nr;
         this.packet = packet;
     }
+    public Protocol(){
+        
+    }
+    
     /* Wait for an event to happen; return its type in event. */
     public void wait_for_event(EventTypeEnum event) {
         // implementación de la función
-        if(event == null){
-            event = EventTypeEnum.FRAME_ARRIVAL;
+        while(event==null){
+            try {
+                System.out.println("Esperando evento...");
+                sleep(100);
+                if(eventType.equals(EventTypeEnum.FRAME_ARRIVAL)){
+                    event=eventType;
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
     /* Fetch a packet from the network layer for transmission on the channel. */
     public void from_network_layer(Packet p) {
-        p.information = packet.information;
+        //p = new Packet(randomWordGenerate());
+        p.information = randomWordGeneration();
+        //p.information = packet.information;
     }
 
     /* Deliver information from an inbound frame to the network layer. */
@@ -50,13 +69,18 @@ public class Protocol {
     public void from_physical_layer(Frame r) {
         //Obtenga un marco entrante de la capa física y cópielo en r.
         r = frame;
+        System.out.println("--------" + r.info.information);
         //return canal fisico 
         
     }
 
     /* Pass the frame to the physical layer for transmission. */
     public void to_physical_layer(Frame s) {
+        s.frameKind = FrameKindEnum.DATA;
+        s.seq = 0;
+        s.ack = 0;
         frame = s;
+        eventType = EventTypeEnum.FRAME_ARRIVAL;
     }
 
     /* Start the clock running and enable the timeout event. */
@@ -87,6 +111,23 @@ public class Protocol {
     /* Forbid the network layer from causing a network layer ready event. */
     public void disable_network_layer() {
         // implementación de la función
+    }
+    
+    public String randomWordGeneration(){
+        int longitud = 7; // Longitud del String aleatorio a generar
+        String caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Caracteres permitidos para el String
+
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder(longitud);
+
+        for (int i = 0; i < longitud; i++) {
+            int indice = random.nextInt(caracteres.length());
+            char caracterAleatorio = caracteres.charAt(indice);
+            sb.append(caracterAleatorio);
+        }
+
+        String stringAleatorio = sb.toString();
+        return stringAleatorio;
     }
     
 }
