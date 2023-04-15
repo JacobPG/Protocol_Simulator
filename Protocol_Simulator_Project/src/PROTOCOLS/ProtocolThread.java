@@ -31,7 +31,7 @@ public class ProtocolThread extends Thread{
                 else{
                     protocol.receiver1();
                 }
-                sleep(10);
+                sleep(speed);
             }
         }
         catch(InterruptedException e){

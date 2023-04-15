@@ -39,18 +39,20 @@ public class Protocol extends Thread{
     /* Wait for an event to happen; return its type in event. */
     public void wait_for_event(EventTypeEnum event) {
         // implementación de la función
+        System.out.println("Receiver wait event...");
         while(event==null){
             try {
-                System.out.println("Esperando evento...");
-                sleep(1000);
+                sleep(500);
                 if(eventType.equals(EventTypeEnum.FRAME_ARRIVAL)){
                     event=eventType;
-                    System.out.println("Evento cambió");
+                    System.out.println("FRAME ARRIVAL");
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        eventType = EventTypeEnum.TIMEOUT;
+        event=null;
     }
 
     /* Fetch a packet from the network layer for transmission on the channel. */
@@ -62,7 +64,7 @@ public class Protocol extends Thread{
 
     /* Deliver information from an inbound frame to the network layer. */
     public void to_network_layer(Packet p) {
-        System.out.println("P information:"+p.information);
+        //System.out.println("information:"+p.information);
         packet = p;
         
     }
@@ -71,7 +73,7 @@ public class Protocol extends Thread{
     public Frame from_physical_layer(Frame r) {
         //Obtenga un marco entrante de la capa física y cópielo en r.
         r = this.frame;
-        System.out.println("From physical layer -  Frame:" + r.info.information);
+        //System.out.println("From physical layer -  Frame.info:" + r.info.information);
         return this.frame;
         
     }
