@@ -12,10 +12,10 @@ package PROTOCOLS;
 public class ProtocolThread extends Thread{
     private int speed;
     private boolean execute = false;
-    private Utopia protocol;
+    private Protocol protocol;
     private int typeCommunication;
 
-    public ProtocolThread(int speed, Utopia protocol, int typeCommunication) {
+    public ProtocolThread(int speed, Protocol protocol, int typeCommunication) {
         this.speed = speed;
         this.protocol = protocol;
         this.typeCommunication = typeCommunication;
@@ -26,10 +26,10 @@ public class ProtocolThread extends Thread{
         try{
             while(execute){
                 if(typeCommunication==0){
-                    protocol.sender1();
+                    protocol.sender();
                 }
                 else{
-                    protocol.receiver1();
+                    protocol.receiver();
                 }
                 sleep(speed);
             }

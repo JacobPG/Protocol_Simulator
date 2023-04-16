@@ -134,4 +134,6 @@ public class Protocol extends Thread{
         return stringAleatorio;
     }
     
+    public void sender(){} //method to sender packets for subprotocols that extend this class
+    public void receiver(){} //method to receive packets for subprotocols that extend this class
 }

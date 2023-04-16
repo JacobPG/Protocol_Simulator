@@ -1,8 +1,7 @@
 package CONTEXT;
 import GUI.JFrameMain;
 import PROTOCOLS.Protocol;
-import PROTOCOLS.ProtocolThread;
-import PROTOCOLS.Utopia;
+import PROTOCOLS.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +25,7 @@ public class Main {
             // TODO code application logic here
             //Machine mA = new Machine("Maquina A", 0,0);
             //Machine mB = new Machine("Maquina B", 0,0);
-            
+            /*
             Utopia utopia = new Utopia();
             
             ProtocolThread utopiaProtocolSender = new ProtocolThread(100, utopia,0);
@@ -35,6 +34,18 @@ public class Main {
             
             ProtocolThread utopiaProtocolReciever = new ProtocolThread(100, utopia,1);
             utopiaProtocolReciever.startProtocol();
+
+            */
+            
+            
+            StopAndWait stopAndWait = new StopAndWait();
+            
+            ProtocolThread stopAndWaitSender = new ProtocolThread(100, stopAndWait,0);
+            
+            stopAndWaitSender.startProtocol();
+            
+            ProtocolThread stopAndWaitReciever = new ProtocolThread(100, stopAndWait,1);
+            stopAndWaitReciever.startProtocol();
             
             //p.sender1();
             //p.receiver1();
