@@ -12,6 +12,7 @@ package PROTOCOLS;
 public class ProtocolThread extends Thread{
     private int speed;
     private boolean execute = false;
+    private boolean paused = false;
     private Utopia protocol;
     private int typeCommunication;
 
@@ -20,7 +21,14 @@ public class ProtocolThread extends Thread{
         this.protocol = protocol;
         this.typeCommunication = typeCommunication;
     }
-    
+    public synchronized void pause() {
+        paused = true;
+    }
+
+    public synchronized void resumeThread() {
+        paused = false;
+        notify();
+    }
     @Override
     public void run(){
         try{
@@ -32,6 +40,15 @@ public class ProtocolThread extends Thread{
                     protocol.receiver1();
                 }
                 sleep(speed);
+                synchronized (this) {
+                while (paused) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    }
+                }
             }
         }
         catch(InterruptedException e){

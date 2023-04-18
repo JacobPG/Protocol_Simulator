@@ -7,7 +7,9 @@ package PROTOCOLS;
 
 import CONTEXT.Frame;
 import CONTEXT.Packet;
+import GUI.MyThread;
 import static PROTOCOLS.EventTypeEnum.FRAME_ARRIVAL;
+import java.awt.Color;
 import static java.lang.Math.random;
 import java.util.Random;
 import java.util.logging.Level;
@@ -20,6 +22,7 @@ import java.util.logging.Logger;
 public class Utopia extends Protocol{
     
     public Boolean running = true;
+    public MyThread graphicThread;
     public Utopia(){
         
     }
@@ -34,16 +37,30 @@ public class Utopia extends Protocol{
         Packet buffer = new Packet("");
         while(running){
             System.out.println("[SENDER]");
-            
             from_network_layer(buffer); //go get something to send
             System.out.println("[SENDER] ->" + buffer.information);
             s.info = buffer; /* copy it into s for transmission */
-            to_physical_layer(s); /* send it on its way */        
+            to_physical_layer(s); /* send it on its way */  
+            graphicThread.startMyThread();
+            while(graphicThread.execute){
+                try {
+                    //System.out.println("no frame arrival");
+                    sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            super.eventType = EventTypeEnum.FRAME_ARRIVAL;
             
+            //activar animacion
             try {
                 Random random = new Random();
-                int numeroAleatorio = random.nextInt(15001) + 5000;
+                int numeroAleatorio = random.nextInt(1001) + 1000;
+                graphicThread.framePanel.setBackground(Color.green);
                 sleep(numeroAleatorio);
+                graphicThread.framePanel.setBackground(Color.BLUE);
+                graphicThread.framePanel.setBounds(205, 125, 50, 25);
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel,graphicThread.startButton);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
             }  

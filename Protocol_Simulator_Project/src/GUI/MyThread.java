@@ -8,6 +8,8 @@
 package GUI;
 
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -19,17 +21,27 @@ import javax.swing.JPanel;
  */
 //Instance manner MyThread h = new MyThread(100); 
 public class MyThread extends Thread{
-    private int speed;
-    private boolean execute = false;
-    private JPanel protocolPanel;
-    private JPanel framePanel;
-    private JButton startButton;
+    public int speed;
+    public boolean execute = false;
+    private boolean paused = false;
+    public JPanel protocolPanel;
+    public JPanel framePanel;
+    public JButton startButton;
 
     public MyThread(int speed, JPanel protocolPanel, JPanel framePanel, JButton startButton) {
         this.speed = speed;
         this.protocolPanel = protocolPanel;
         this.framePanel = framePanel;
         this.startButton = startButton;
+    }
+    
+    public synchronized void pause() {
+        paused = true;
+    }
+
+    public synchronized void resumeThread() {
+        paused = false;
+        notify();
     }
     
     @Override
@@ -42,9 +54,18 @@ public class MyThread extends Thread{
                 protocolPanel.updateUI();
                 if(framePanel.getX()>=725){
                     execute=false;
-                    startButton.setEnabled(true);
+                    //startButton.setEnabled(true);
                 }
                 sleep(speed);
+                synchronized (this) {
+                while (paused) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    }
+                }
             }
         }
         catch(InterruptedException e){
@@ -58,10 +79,12 @@ public class MyThread extends Thread{
             start(); //thread method 
         }
     }
+    
     public void finish(){
         if(execute){
             execute = false;
         }
     }
+    
     
 }

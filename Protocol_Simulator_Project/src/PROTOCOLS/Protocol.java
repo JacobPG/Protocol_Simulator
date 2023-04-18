@@ -43,9 +43,11 @@ public class Protocol extends Thread{
         while(event==null){
             try {
                 sleep(500);
-                if(eventType.equals(EventTypeEnum.FRAME_ARRIVAL)){
-                    event=eventType;
-                    System.out.println("FRAME ARRIVAL");
+                if(eventType!=null){
+                    if(eventType.equals(EventTypeEnum.FRAME_ARRIVAL)){
+                        event=eventType;
+                        System.out.println("FRAME ARRIVAL");
+                    }
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
@@ -84,7 +86,7 @@ public class Protocol extends Thread{
         s.seq = 0;
         s.ack = 0;
         this.frame = s;
-        eventType = EventTypeEnum.FRAME_ARRIVAL;
+        //eventType = EventTypeEnum.FRAME_ARRIVAL;
     }
 
     /* Start the clock running and enable the timeout event. */
