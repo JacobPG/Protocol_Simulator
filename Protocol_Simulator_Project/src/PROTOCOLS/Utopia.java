@@ -14,6 +14,7 @@ import static java.lang.Math.random;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 
 /**
  *
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
 public class Utopia extends Protocol{
     
 
-    public MyThread graphicThread;
+    
     public Utopia(){
         
     }
@@ -61,7 +62,7 @@ public class Utopia extends Protocol{
                 sleep(numeroAleatorio);
                 graphicThread.framePanel.setBackground(Color.BLUE);
                 graphicThread.framePanel.setBounds(205, 125, 50, 25);
-                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel,graphicThread.startButton);
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo Utopia");
             } catch (InterruptedException ex) {
                 Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
             }  

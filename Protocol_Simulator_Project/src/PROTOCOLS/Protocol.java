@@ -8,6 +8,7 @@ package PROTOCOLS;
 import CONTEXT.Frame;
 import CONTEXT.FrameKindEnum;
 import CONTEXT.Packet;
+import GUI.MyThread;
 import static PROTOCOLS.EventTypeEnum.FRAME_ARRIVAL;
 import static java.lang.Thread.sleep;
 import java.util.Random;
@@ -20,6 +21,7 @@ import java.util.logging.Logger;
  */
 public class Protocol extends Thread{
     public Boolean running = true;
+    public MyThread graphicThread;
     
     Frame frame;
     int MAX_SEQ;

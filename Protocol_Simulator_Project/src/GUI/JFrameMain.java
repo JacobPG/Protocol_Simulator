@@ -6,7 +6,13 @@
 package GUI;
 
 
+import PROTOCOLS.GoBack;
+import PROTOCOLS.PAR;
+import PROTOCOLS.Protocol;
 import PROTOCOLS.ProtocolThread;
+import PROTOCOLS.SelectiveRepeat;
+import PROTOCOLS.SlidingWindow;
+import PROTOCOLS.StopAndWait;
 import PROTOCOLS.Utopia;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -22,6 +28,8 @@ import java.awt.Stroke;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
@@ -31,6 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 /**
  *
@@ -65,7 +74,8 @@ public class JFrameMain extends javax.swing.JFrame {
     
     private JFrame[] frameProtocols = {new JFrameUtopia(), new JFrameStopAndWait(), new JFramePAR(), 
         new JFrameSlidingWindow(), new JFrameGoBack(), new JFrameSelectiveRepeat()};
-    private Utopia utopia;
+    //private Utopia utopia;
+    private Protocol protocol;
     private ProtocolThread protocolSender;
     private ProtocolThread protocolReciever;
 
@@ -107,9 +117,11 @@ public class JFrameMain extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    startButton.setEnabled(true);
-                    stopSimulation();
-                    finishSimulation();
+                    if(!startButton.isEnabled()){
+                        startButton.setEnabled(true);
+                        stopSimulation();
+                        finishSimulation();
+                    }
                     panel.remove(frameProtocols[index].getContentPane());
                     panel.remove(backButton);
                     panel.remove(nextButton);
@@ -137,9 +149,11 @@ public class JFrameMain extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    startButton.setEnabled(true);
-                    stopSimulation();
-                    finishSimulation();
+                    if(!startButton.isEnabled()){
+                        startButton.setEnabled(true);
+                        stopSimulation();
+                        finishSimulation();
+                    }
                     panel.remove(frameProtocols[index].getContentPane());
                     panel.remove(backButton);
                     panel.remove(nextButton);
@@ -164,7 +178,7 @@ public class JFrameMain extends javax.swing.JFrame {
         this.add(panel);
         setResizable(false);
     }
-    public JPanel createFrameProtocol(String nombre){
+    public JPanel createFrameProtocol(String nameProtocol){
         JPanel protocolPanel = new JPanel(){
             //Draw the line
             @Override
@@ -176,7 +190,7 @@ public class JFrameMain extends javax.swing.JFrame {
                 g2.drawLine(210,120, 770,120);
             };
         };
-        JLabel titleLabel = new JLabel(nombre);
+        JLabel titleLabel = new JLabel(nameProtocol);
         Font letra = new Font("Arial", Font.BOLD, 16);
         titleLabel.setFont(letra);
         titleLabel.setBounds(400, 50, 200, 30);
@@ -198,37 +212,22 @@ public class JFrameMain extends javax.swing.JFrame {
         buttonsPanel.setBackground(Color.WHITE);
         buttonsPanel.setBounds(720, 300, 250, 320);
         
-        JLabel label1 = new JLabel(); //datos no recibidos
-        JLabel label2 = new JLabel(); //datos listos para enviar
-        JLabel label3 = new JLabel(); //los datos se han entregado a la capa superior
-        JPanel label4 = new JPanel(); //datos no recibidos
-        JPanel label5 = new JPanel(); //datos listos para enviar
-        JPanel label6 = new JPanel(); //los datos se han entregado a la capa superior
         
-        
-        label1.setText("No existe frame");
-        label2.setText("Frame enviado");
-        label3.setText("Frame recibido");
-        label4.setBackground(Color.GRAY);
-        label5.setBackground(Color.blue);
-        label6.setBackground(Color.GREEN);
-        
-        label1.setBounds(55, 0, 100, 40);
-        label2.setBounds(55, 40, 100, 40);
-        label3.setBounds(55, 80, 100, 40);
-        label4.setBounds(10, 0, 40, 30);
-        label5.setBounds(10, 40, 40, 30);
-        label6.setBounds(10, 80, 40, 30);
 
         JPanel labelsPanel = new JPanel(null);
         labelsPanel.setBackground(Color.WHITE);
         labelsPanel.setBounds(30, 300, 600, 320);
-        labelsPanel.add(label1);
-        labelsPanel.add(label2);
-        labelsPanel.add(label3);
-        labelsPanel.add(label4);
-        labelsPanel.add(label5);
-        labelsPanel.add(label6);
+  
+//        for (int i = 0; i < getLabelsInfo(nameProtocol).size(); i++) {
+//            labelsPanel.add(getLabelsInfo(nameProtocol).get(i));
+//        }
+        ArrayList<Component> labels = getLabelsInfo(nameProtocol);
+        //System.out.println(labels.size());
+        //labelsPanel.add(labels.get(0));
+        for (int i = 0; i < labels.size(); i++) {
+            //System.out.println(labels.size() + i);
+            labelsPanel.add(labels.get(i));
+        }
         
         JLabel machineA = new JLabel();
         machineA.setBounds(100,30,100,100);
@@ -249,7 +248,7 @@ public class JFrameMain extends javax.swing.JFrame {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 startButton.setEnabled(false); // Deshabilitar el botón
-                startSimulation(protocolPanel, framePanel3, startButton);
+                startSimulation(protocolPanel, framePanel3, nameProtocol);
             }
         });
         
@@ -289,33 +288,166 @@ public class JFrameMain extends javax.swing.JFrame {
         protocolPanel.add(labelsPanel);
         return protocolPanel;
     }
-    public void startSimulation(JPanel refProtocolPanel, JPanel refFramePanel3,JButton startButton){
+    
+    public void startSimulation(JPanel refProtocolPanel, JPanel refFramePanel3, String protocolName){
         refFramePanel3.setBounds(205, 125, 50, 25);
-        //thread = new MyThread(100, refProtocolPanel, refFramePanel3, startButton);
-        //thread.startMyThread();
-        utopia = new Utopia();
         refFramePanel3.setVisible(true);
-        utopia.graphicThread = new MyThread(50, refProtocolPanel, refFramePanel3, startButton);
-        protocolSender = new ProtocolThread(100, utopia,0);
+        switch(protocolName){
+            case "Protocolo Utopia":
+                protocol = new Utopia();
+                break;
+            case "Protocolo StopAndWait":
+                protocol = new StopAndWait();
+                break;
+            case "Protocolo PAR":
+                protocol = new PAR();
+                break;
+            case "Protocolo SlidingWindow":
+                protocol = new SlidingWindow();
+                break;
+            case "Protocolo GOBACK":
+                protocol = new GoBack();
+                break;
+            case "Protocolo SelectiveRepeat":
+                protocol = new SelectiveRepeat();
+                break;
+        }
+        protocol.graphicThread = new MyThread(50, refProtocolPanel, refFramePanel3, protocolName);
+        protocolSender = new ProtocolThread(100, protocol,0);
         protocolSender.startProtocol();
-        protocolReciever = new ProtocolThread(100, utopia,1);
+        protocolReciever = new ProtocolThread(100, protocol,1);
         protocolReciever.startProtocol();
     }
+    
+    public ArrayList<Component> getLabelsInfo(String protocolName){
+        ArrayList<Component> list = new ArrayList<>();
+        switch(protocolName){
+        case "Protocolo Utopia":
+            list = utopiaLabels();
+            break;
+        case "Protocolo StopAndWait":
+            list = stopAndWaitLabels();
+            break;
+        case "Protocolo PAR":
+            list = parLabels();
+            break;
+//        case "Protocolo SlidingWindow":
+//            return slidingWindowLabels();
+//        case "Protocolo GOBACK":
+//            return goBackLabels();
+//        case "Protocolo SelectiveRepeat":
+//            return selectiveRepeatLabels();
+        }
+        return list;
+    }
+    public ArrayList<Component> utopiaLabels(){
+        ArrayList<Component> labels = new ArrayList<>();
+        JLabel label1 = new JLabel(); //datos no recibidos
+        JLabel label2 = new JLabel(); //datos listos para enviar
+        JLabel label3 = new JLabel(); //los datos se han entregado a la capa superior
+        JPanel label4 = new JPanel(); //datos no recibidos
+        JPanel label5 = new JPanel(); //datos listos para enviar
+        JPanel label6 = new JPanel(); //los datos se han entregado a la capa superior
+        
+        
+        label1.setText("No existe frame");
+        label2.setText("Frame enviado");
+        label3.setText("Frame recibido");
+        label4.setBackground(Color.GRAY);
+        label5.setBackground(Color.blue);
+        label6.setBackground(Color.GREEN);
+        
+        label1.setBounds(55, 0, 100, 40);
+        label2.setBounds(55, 40, 100, 40);
+        label3.setBounds(55, 80, 100, 40);
+        label4.setBounds(10, 0, 40, 30);
+        label5.setBounds(10, 40, 40, 30);
+        label6.setBounds(10, 80, 40, 30);
+        
+        labels.add(label1);
+        labels.add(label2);
+        labels.add(label3);
+        labels.add(label4);
+        labels.add(label5);
+        labels.add(label6);
+        return labels;
+    }
+    public ArrayList<Component> stopAndWaitLabels(){
+        ArrayList<Component> labels = new ArrayList<>();
+        labels = (ArrayList<Component>) utopiaLabels().clone();
+        JLabel label1 = new JLabel();
+        JPanel label2 = new JPanel();
+        label1.setText("Permiso del receptor");
+        label2.setBackground(new Color(64,207,255));
+        label1.setBounds(55, 120, 140, 40);
+        label2.setBounds(10, 120, 40, 30);
+        labels.add(label1);
+        labels.add(label2);
+        return labels;
+    }
+    
+    public ArrayList<Component> parLabels(){
+        ArrayList<Component> labels = new ArrayList<>();
+        labels = (ArrayList<Component>) stopAndWaitLabels().clone();
+        JLabel label1 = new JLabel();
+        JLabel label2 = new JLabel();
+        JLabel label3 = new JLabel();
+        JPanel label4 = new JPanel();
+        JPanel label5 = new JPanel();
+        JTextField label6 = new JTextField();
+        JButton label7 = new JButton();
+        label1.setText("TIMEOUT");
+        label2.setText("cksum_err");
+        label3.setText("Tasa de errores: ");
+        label7.setText("Aceptar");
+        label4.setBackground(Color.RED);
+        label5.setBackground(Color.YELLOW);
+        
+        label1.setBounds(55, 160, 100, 40);
+        label2.setBounds(55, 200, 100, 40);
+        label3.setBounds(55, 240, 100, 40);
+        label4.setBounds(10, 160, 40, 30);
+        label5.setBounds(10, 200, 40, 30);
+        label6.setBounds(200, 240, 100, 30);
+        label7.setBounds(300, 240, 100, 30);
+        labels.add(label1);
+        labels.add(label2);
+        labels.add(label3);
+        labels.add(label4);
+        labels.add(label5);
+        labels.add(label6);
+        labels.add(label7);
+        return labels;
+    }
+    
+    public ArrayList<Component> slidingWindowLabels(){
+        ArrayList<Component> labels = new ArrayList<>();
+        return labels;
+    }
+    public ArrayList<Component> goBackLabels(){
+        ArrayList<Component> labels = new ArrayList<>();
+        return labels;
+    }
+    public ArrayList<Component> selectiveRepeatLabels(){
+        ArrayList<Component> labels = new ArrayList<>();
+        return labels;
+    }
+    
     public void stopSimulation(){
         System.out.println("stop");
-        utopia.graphicThread.suspend();
+        protocol.graphicThread.suspend();
         protocolSender.suspend();
         protocolReciever.suspend();
     }
     public void toResumeSimulation(){
         System.out.println("to resume");
-        utopia.graphicThread.resume();
+        protocol.graphicThread.resume();
         protocolSender.resume();
         protocolReciever.resume();
     }
     public void finishSimulation(){
-        utopia.running = false;
-        utopia.graphicThread.finish();
+        protocol.running = false;
+        protocol.graphicThread.finish();
         protocolSender.finishProtocol();
         protocolReciever.finishProtocol();
     }

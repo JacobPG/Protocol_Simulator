@@ -38,24 +38,20 @@ public class Main {
 //            ProtocolThread utopiaProtocolReciever = new ProtocolThread(100, utopia,1);
 //            utopiaProtocolReciever.startProtocol();
 
+            */
             
+            /*
             PAR par = new PAR();
             ProtocolThread par_Sender = new ProtocolThread(100, par,0);
             par_Sender.startProtocol();
             ProtocolThread par_Reciever = new ProtocolThread(100, par,1);
-            par_Reciever.startProtocol();
-            */
-            
-            
-//            PAR par = new PAR();
-//            ProtocolThread par_Sender = new ProtocolThread(100, par,0);
-//            par_Sender.startProtocol();
-//            ProtocolThread par_Reciever = new ProtocolThread(100, par,1);
-//            par_Reciever.startProtocol();
+            par_Reciever.startProtocol();*/
 
-            
-            //p.sender1();
-            //p.receiver1();
+            /*StopAndWait stopAndWait = new StopAndWait();
+            ProtocolThread stopAndWaitSender = new ProtocolThread(100, stopAndWait,0);
+            stopAndWaitSender.startProtocol();
+            ProtocolThread stopAndWaitReciever = new ProtocolThread(100, stopAndWait,1);
+            stopAndWaitReciever.startProtocol();*/
            
             JFrameMain windowProtocolSimulator;
             try {

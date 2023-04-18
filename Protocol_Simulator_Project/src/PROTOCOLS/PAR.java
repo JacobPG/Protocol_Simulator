@@ -9,12 +9,15 @@ package PROTOCOLS;
 import CONTEXT.Frame;
 import CONTEXT.FrameKindEnum;
 import CONTEXT.Packet;
+import GUI.MyThread;
+import java.awt.Color;
 import static java.lang.Thread.sleep;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 
 /**
  *
@@ -24,7 +27,8 @@ public class PAR extends Protocol{
     
     private EventTypeEnum eventForReceiver;
     private EventTypeEnum eventForSender;
-        
+    JLabel texto = new JLabel("0");
+                    
     public PAR(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         super(frame, MAX_SEQ, eventType, seq_nr, packet);
     }
@@ -50,19 +54,37 @@ public class PAR extends Protocol{
             s.hasAnError = hasAnError();
             
             to_physical_layer(s); /* se way nd it on its*/
-            System.out.println("[SENDER] -> " + buffer.information + " - Seq: "+s.seq);
-                       
+            System.out.println("[SENDER] -> " + buffer.information + " - Seq: "+s.seq);          
             //star_timer(s.ack)
-            wait_for_frame = System.nanoTime();    
-            
+            wait_for_frame = System.nanoTime(); //star_timer
             System.out.println("[SENDER] " + "Sender is waitting for an event...");
-            try {
+            
+            
+            Random random = new Random();
+            graphicThread.estado = "arriba";
+            graphicThread.speed = random.nextInt(1) + 100;
+            graphicThread.startMyThread();
+            while(graphicThread.execute){
+                try {
+                    texto.setBounds(0, 0, 40, 20);
+                    texto.setText(String.valueOf(s.seq));
+                    graphicThread.framePanel.setBackground(Color.BLUE);
+                    graphicThread.framePanel.add(texto);
+                    graphicThread.framePanel.updateUI(); 
+                    //System.out.println("no frame arrival");
+                    sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");            
+            /*try {
                 Random random = new Random();
                 int numeroAleatorio = random.nextInt(15001) + 5000;
                 sleep(numeroAleatorio);
             } catch (InterruptedException ex) {
                 Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
             
             this.eventForReceiver = EventTypeEnum.FRAME_ARRIVAL;//set the frame arrival for receiver
             
@@ -138,13 +160,32 @@ public class PAR extends Protocol{
                 System.out.println("[RECIEVER] -> Send a frame to confirm"+" - Ack: "+s.ack);
                 System.out.println("[RECEIVER] " + "Receiver is waitting for an event...");
                 
-                try {
+                
+                Random random = new Random();
+                graphicThread.estado = "abajo";
+                graphicThread.speed = random.nextInt(1) + 100;
+                graphicThread.startMyThread();
+                while(graphicThread.execute){
+                    try {
+                        texto.setBounds(0, 0, 40, 20);
+                        texto.setText(String.valueOf(s.seq));
+                        graphicThread.framePanel.setBackground(Color.GREEN);
+                        graphicThread.framePanel.add(texto);
+                        graphicThread.framePanel.updateUI(); 
+                        //System.out.println("no frame arrival");
+                        sleep(10);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");
+                /*try {
                     Random random = new Random();
                     int numeroAleatorio = random.nextInt(15001) + 5000;
                     sleep(numeroAleatorio);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }*/
                 this.eventForSender = EventTypeEnum.FRAME_ARRIVAL;//Set the frame arrival for sender
             }            
 	} 

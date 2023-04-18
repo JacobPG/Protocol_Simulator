@@ -7,6 +7,8 @@ package PROTOCOLS;
 
 import CONTEXT.Frame;
 import CONTEXT.Packet;
+import GUI.MyThread;
+import java.awt.Color;
 import static java.lang.Thread.sleep;
 import java.util.Random;
 import java.util.logging.Level;
@@ -37,15 +39,34 @@ public class StopAndWait extends Protocol{
             from_network_layer(buffer); //go get something to send
             System.out.println("[SENDER] -> " + buffer.information);
             s.info = buffer; /* copy it into s for transmission */
-            to_physical_layer(s); /* send it on its way */        
-                       
+            to_physical_layer(s); /* send it on its way */
+            
+            graphicThread.estado = "arriba";
+            graphicThread.startMyThread();
+            while(graphicThread.execute){
+                try {
+                    sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(StopAndWait.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo StopAndWait");
             try {
-                Random random = new Random();
-                int numeroAleatorio = random.nextInt(15001) + 5000;
-                sleep(numeroAleatorio);
+                graphicThread.framePanel.setBackground(Color.GREEN);
+                sleep(2000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
             } 
+            
+            super.eventType = EventTypeEnum.FRAME_ARRIVAL;
+            
+//            try {
+//                Random random = new Random();
+//                int numeroAleatorio = random.nextInt(15001) + 5000;
+//                sleep(numeroAleatorio);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
+//            } 
             
             wait_for_event(event, true); /* only possibility is frame arrival */
             
@@ -68,16 +89,33 @@ public class StopAndWait extends Protocol{
             to_network_layer(r.info); /* pass the data to the network layer */
             System.out.println("Packet: "+ super.packet.information);
             
-            to_physical_layer(s); /* send a dummy frame to awaken sender */  
+            to_physical_layer(s); /* send a dummy frame to awaken sender */
+            
             System.out.println("[RECIEVER] -> Sent a dummy frame to confirm\n");
             
-            try {
-                Random random = new Random();
-                int numeroAleatorio = random.nextInt(15001) + 5000;
-                sleep(numeroAleatorio);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
-            } 
+            
+            
+            graphicThread.estado = "abajo";
+            graphicThread.framePanel.setBackground(new Color(64,207,255));
+            graphicThread.startMyThread();
+            while(graphicThread.execute){
+                try {
+                    sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(StopAndWait.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo StopAndWait");
+            super.eventType = EventTypeEnum.FRAME_ARRIVAL;
+            graphicThread.framePanel.setBackground(Color.BLUE);
+            
+//            try {
+//                Random random = new Random();
+//                int numeroAleatorio = random.nextInt(15001) + 5000;
+//                sleep(numeroAleatorio);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
+//            } 
 	} 
     }
     
@@ -88,12 +126,14 @@ public class StopAndWait extends Protocol{
         while(event==null){
             try {
                 sleep(500);
-                if(eventType.equals(EventTypeEnum.FRAME_ARRIVAL) && ((isSender && this.frame.info==null)||(!isSender && this.frame.info!=null))){
-                    event=eventType;
-                    System.out.println("FRAME ARRIVAL to "+author);
+                if(eventType!=null){
+                    if(eventType.equals(EventTypeEnum.FRAME_ARRIVAL) && ((isSender && this.frame.info==null)||(!isSender && this.frame.info!=null))){
+                        event=eventType;
+                        System.out.println("FRAME ARRIVAL to "+author);
+                    }
                 }
             } catch (InterruptedException ex) {
-                Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(StopAndWait.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         eventType = EventTypeEnum.TIMEOUT;
