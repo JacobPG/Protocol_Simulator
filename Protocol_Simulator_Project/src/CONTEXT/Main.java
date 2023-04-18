@@ -26,26 +26,26 @@ public class Main {
             //Machine mA = new Machine("Maquina A", 0,0);
             //Machine mB = new Machine("Maquina B", 0,0);
             /*
-            Utopia utopia = new Utopia();
+            StopAndWait stopAndWait = new StopAndWait();
+            ProtocolThread stopAndWaitSender = new ProtocolThread(100, stopAndWait,0);
+            stopAndWaitSender.startProtocol();
+            ProtocolThread stopAndWaitReciever = new ProtocolThread(100, stopAndWait,1);
+            stopAndWaitReciever.startProtocol();
             
-            ProtocolThread utopiaProtocolSender = new ProtocolThread(100, utopia,0);
             
-            utopiaProtocolSender.startProtocol();
-            
-            ProtocolThread utopiaProtocolReciever = new ProtocolThread(100, utopia,1);
-            utopiaProtocolReciever.startProtocol();
-
+            PAR par = new PAR();
+            ProtocolThread par_Sender = new ProtocolThread(100, par,0);
+            par_Sender.startProtocol();
+            ProtocolThread par_Reciever = new ProtocolThread(100, par,1);
+            par_Reciever.startProtocol();
             */
             
             
-            StopAndWait stopAndWait = new StopAndWait();
-            
-            ProtocolThread stopAndWaitSender = new ProtocolThread(100, stopAndWait,0);
-            
-            stopAndWaitSender.startProtocol();
-            
-            ProtocolThread stopAndWaitReciever = new ProtocolThread(100, stopAndWait,1);
-            stopAndWaitReciever.startProtocol();
+            PAR par = new PAR();
+            ProtocolThread par_Sender = new ProtocolThread(100, par,0);
+            par_Sender.startProtocol();
+            ProtocolThread par_Reciever = new ProtocolThread(100, par,1);
+            par_Reciever.startProtocol();
             
             //p.sender1();
             //p.receiver1();

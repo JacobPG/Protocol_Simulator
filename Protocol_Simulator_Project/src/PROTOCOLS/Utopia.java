@@ -19,7 +19,6 @@ import java.util.logging.Logger;
  */
 public class Utopia extends Protocol{
     
-    public Boolean running = true;
     public Utopia(){
         
     }

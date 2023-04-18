@@ -17,7 +17,6 @@ import java.util.logging.Logger;
  * @author yeico
  */
 public class StopAndWait extends Protocol{
-    public Boolean running = true;
     
     public StopAndWait(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         super(frame, MAX_SEQ, eventType, seq_nr, packet);
@@ -70,7 +69,7 @@ public class StopAndWait extends Protocol{
             System.out.println("Packet: "+ super.packet.information);
             
             to_physical_layer(s); /* send a dummy frame to awaken sender */  
-            System.out.println("[RECIEVER] -> Sent a dummy packet to confirm\n");
+            System.out.println("[RECIEVER] -> Sent a dummy frame to confirm\n");
             
             try {
                 Random random = new Random();

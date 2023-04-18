@@ -19,11 +19,17 @@ import java.util.logging.Logger;
  * @author yeico
  */
 public class Protocol extends Thread{
+    Boolean running = true;
+    
     Frame frame;
     int MAX_SEQ;
     EventTypeEnum eventType;
     int seq_nr;
     Packet packet;
+    
+    float errorRate = 0; //from 0 to 1, where 1 all frames will have an error.
+    /* time to wait for the confirmation frame from Receiver [in nano-seconds]*/
+    int waitTime = 16000; 
    
     public Protocol(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         this.frame = frame;
@@ -81,8 +87,6 @@ public class Protocol extends Thread{
     /* Pass the frame to the physical layer for transmission. */
     public void to_physical_layer(Frame s) {
         s.frameKind = FrameKindEnum.DATA;
-        s.seq = 0;
-        s.ack = 0;
         this.frame = s;
         eventType = EventTypeEnum.FRAME_ARRIVAL;
     }
@@ -132,6 +136,15 @@ public class Protocol extends Thread{
 
         String stringAleatorio = sb.toString();
         return stringAleatorio;
+    }
+
+    public void setErrorRate(float errorRate) {
+        this.errorRate = (float)errorRate;
+    }
+    
+    public Boolean hasAnError(){        
+        Random random = new Random();
+        return random.nextFloat() < this.errorRate;
     }
     
     public void sender(){} //method to sender packets for subprotocols that extend this class
