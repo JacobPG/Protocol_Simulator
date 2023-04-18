@@ -220,12 +220,6 @@ public class JFrameMain extends javax.swing.JFrame {
         label5.setBounds(10, 40, 40, 30);
         label6.setBounds(10, 80, 40, 30);
 
-
-        
-        
-        
-        
-        
         JPanel labelsPanel = new JPanel(null);
         labelsPanel.setBackground(Color.WHITE);
         labelsPanel.setBounds(30, 300, 600, 320);

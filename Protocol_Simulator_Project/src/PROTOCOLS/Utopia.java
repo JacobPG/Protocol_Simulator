@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class Utopia extends Protocol{
     
-    public Boolean running = true;
+
     public MyThread graphicThread;
     public Utopia(){
         
@@ -32,7 +32,8 @@ public class Utopia extends Protocol{
     }
     
     //void input
-    public void sender1(){
+    @Override
+    public void sender(){
         Frame s = new Frame();
         Packet buffer = new Packet("");
         while(running){
@@ -67,7 +68,8 @@ public class Utopia extends Protocol{
         }
     }
     //void input
-    public void receiver1(){
+    @Override
+    public void receiver(){
         Frame r = new Frame();
 	EventTypeEnum event = null; /* filled in by wait, but not used here */
 	while (running) {
