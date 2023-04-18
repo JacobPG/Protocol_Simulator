@@ -217,7 +217,7 @@ public class PAR extends Protocol{
                     
                 }else{
                     System.out.println("\nFRAME ARRIVAL to "+author+"\n");                    
-                    this.eventForSender = EventTypeEnum.CKSUM_ERR;                    
+                    this.eventForSender = EventTypeEnum.FRAME_ARRIVAL;                    
                     return EventTypeEnum.FRAME_ARRIVAL;
                 }
             }else if (this.frame.info!=null){

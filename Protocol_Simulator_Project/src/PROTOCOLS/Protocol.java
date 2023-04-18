@@ -31,7 +31,7 @@ public class Protocol extends Thread{
     
     float errorRate = 0; //from 0 to 1, where 1 all frames will have an error.
     /* time to wait for the confirmation frame from Receiver [in nano-seconds]*/
-    int waitTime = 16000; 
+    int waitTime = 17000; 
    
     public Protocol(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         this.frame = frame;
@@ -142,8 +142,9 @@ public class Protocol extends Thread{
         return stringAleatorio;
     }
 
-    public void setErrorRate(float errorRate) {
-        this.errorRate = (float)errorRate;
+    public void setErrorRate(int errorRate) {
+        //errorRate expected be a number between 0 and 100.
+        this.errorRate = (float)errorRate/100;
     }
     
     public Boolean hasAnError(){        
