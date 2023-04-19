@@ -40,8 +40,8 @@ public class Main {
 
             */
             
-            /*
-            PAR par = new PAR();
+            
+            /*PAR par = new PAR();
             ProtocolThread par_Sender = new ProtocolThread(100, par,0);
             par_Sender.startProtocol();
             ProtocolThread par_Reciever = new ProtocolThread(100, par,1);

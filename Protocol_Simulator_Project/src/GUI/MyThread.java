@@ -106,14 +106,12 @@ public class MyThread extends Thread{
             case "arriba":
                 framePanel.setBounds(framePanel.getX()+10, framePanel.getY(), framePanel.getWidth(), framePanel.getHeight());
                 if(framePanel.getX()>=725){
-                    System.out.println(framePanel.getX());
                     finish();
                 }
                 break;
             case "abajo":
                 framePanel.setBounds(framePanel.getX()-10, framePanel.getY(), framePanel.getWidth(), framePanel.getHeight());
                 if(framePanel.getX()<=205){
-                    System.out.println(framePanel.getX());
                     finish();
                 }
                 break;         

@@ -64,6 +64,7 @@ public class JFrameMain extends javax.swing.JFrame {
         }
     };
     
+    private int number = 0;
     private JButton nextButton = new JButton();
     private JButton backButton = new JButton();
     private JButton startButton;
@@ -75,7 +76,7 @@ public class JFrameMain extends javax.swing.JFrame {
     private JFrame[] frameProtocols = {new JFrameUtopia(), new JFrameStopAndWait(), new JFramePAR(), 
         new JFrameSlidingWindow(), new JFrameGoBack(), new JFrameSelectiveRepeat()};
     //private Utopia utopia;
-    private Protocol protocol;
+    private Protocol protocol = new Protocol();
     private ProtocolThread protocolSender;
     private ProtocolThread protocolReciever;
 
@@ -312,6 +313,7 @@ public class JFrameMain extends javax.swing.JFrame {
                 protocol = new SelectiveRepeat();
                 break;
         }
+        protocol.setErrorRate(number);
         protocol.graphicThread = new MyThread(50, refProtocolPanel, refFramePanel3, protocolName);
         protocolSender = new ProtocolThread(100, protocol,0);
         protocolSender.startProtocol();
@@ -389,6 +391,17 @@ public class JFrameMain extends javax.swing.JFrame {
     public ArrayList<Component> parLabels(){
         ArrayList<Component> labels = new ArrayList<>();
         labels = (ArrayList<Component>) stopAndWaitLabels().clone();
+        JLabel labelTimer = new JLabel();
+        JLabel labelLatencia = new JLabel();
+        protocol.timerSec(labelTimer);
+        //labelTimer.setText("timer: " + protocol.timerSec() + "s");
+        int time = protocol.waitTime/1000;
+        labelLatencia.setText("Latencia maxima: " + time + "s");
+        labelTimer.setBounds(155, 0, 100, 40);
+        labelLatencia.setBounds(155, 40, 200, 40);
+        
+        
+        
         JLabel label1 = new JLabel();
         JLabel label2 = new JLabel();
         JLabel label3 = new JLabel();
@@ -402,6 +415,7 @@ public class JFrameMain extends javax.swing.JFrame {
         label7.setText("Aceptar");
         label4.setBackground(Color.RED);
         label5.setBackground(Color.YELLOW);
+        label6.setText("0");
         
         label1.setBounds(55, 160, 100, 40);
         label2.setBounds(55, 200, 100, 40);
@@ -410,6 +424,18 @@ public class JFrameMain extends javax.swing.JFrame {
         label5.setBounds(10, 200, 40, 30);
         label6.setBounds(200, 240, 100, 30);
         label7.setBounds(300, 240, 100, 30);
+        label7.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if(label6.getText().length()==0 || Integer.valueOf(label6.getText())> 100 || Integer.valueOf(label6.getText())<0){
+                    number = 0;
+                }
+                else{
+                    number = Integer.valueOf(label6.getText());
+                }
+                
+            }
+        });
         labels.add(label1);
         labels.add(label2);
         labels.add(label3);
@@ -417,6 +443,8 @@ public class JFrameMain extends javax.swing.JFrame {
         labels.add(label5);
         labels.add(label6);
         labels.add(label7);
+        labels.add(labelLatencia);
+        labels.add(labelTimer);
         return labels;
     }
     

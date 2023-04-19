@@ -27,12 +27,13 @@ public class PAR extends Protocol{
     
     private EventTypeEnum eventForReceiver;
     private EventTypeEnum eventForSender;
-    JLabel texto = new JLabel("0");
+    
                     
     public PAR(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         super(frame, MAX_SEQ, eventType, seq_nr, packet);
     }
-    public PAR(){}
+    public PAR(){
+    }
     
     //void input
     @Override
@@ -45,7 +46,7 @@ public class PAR extends Protocol{
         from_network_layer(buffer); //go get something to send
         
         long wait_for_frame;
-        
+        JLabel text = new JLabel(String.valueOf(s.seq));
         while(running){
             s = new Frame();
             /* copy it into s for transmission */
@@ -60,32 +61,30 @@ public class PAR extends Protocol{
             System.out.println("[SENDER] " + "Sender is waitting for an event...");
             
             
-            Random random = new Random();
             graphicThread.estado = "arriba";
-            graphicThread.speed = random.nextInt(1) + 100;
+            graphicThread.framePanel.removeAll();
+            text.setText(String.valueOf(s.seq));
+            text.setBounds(0, 0, 40, 20);
+            Random r = new Random();
+            graphicThread.speed = r.nextInt(100)+20;
+            graphicThread.framePanel.add(text);
+            graphicThread.framePanel.setBackground(Color.BLUE);
             graphicThread.startMyThread();
             while(graphicThread.execute){
                 try {
-                    texto.setBounds(0, 0, 40, 20);
-                    texto.setText(String.valueOf(s.seq));
-                    graphicThread.framePanel.setBackground(Color.BLUE);
-                    graphicThread.framePanel.add(texto);
-                    graphicThread.framePanel.updateUI(); 
-                    //System.out.println("no frame arrival");
                     sleep(10);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");            
-            /*try {
-                Random random = new Random();
-                int numeroAleatorio = random.nextInt(15001) + 5000;
-                sleep(numeroAleatorio);
+            try {
+                graphicThread.framePanel.setBackground(Color.GREEN); 
+                sleep(2000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-            
+            } 
+            eventForSender = null;
             this.eventForReceiver = EventTypeEnum.FRAME_ARRIVAL;//set the frame arrival for receiver
             
             event=null;
@@ -96,10 +95,9 @@ public class PAR extends Protocol{
                     Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 event = wait_for_event_S(event, wait_for_frame); /* only possibility is frame arrival */
-            }
-            
-            
+            }            
             if (event.equals(EventTypeEnum.FRAME_ARRIVAL)){
+                eventForSender = null;
                 s = from_physical_layer(s);
                 if(s.ack == next_frame_to_send){
                     System.out.println("[SENDER] " + "Frame Arrival Expected in Sender");
@@ -111,6 +109,52 @@ public class PAR extends Protocol{
                     System.out.println("[SENDER] " + "Frame Arrival Unexpected in Sender");
                 }
             }
+            else if(event.equals(EventTypeEnum.CKSUM_ERR)){
+                eventForSender = null;
+                graphicThread.finish();
+                graphicThread.framePanel.setBackground(Color.yellow);
+                try {
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setVisible(false);
+                try {
+                    sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setBounds(205, 125, 50, 25);
+                graphicThread.framePanel.setVisible(true);
+                try {
+                    graphicThread.framePanel.setBackground(Color.RED);
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");
+            }
+            else if(event.equals(EventTypeEnum.TIMEOUT)){
+                eventForSender = null;
+                graphicThread.finish();
+                graphicThread.framePanel.setVisible(false);
+                try {
+                    sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setBounds(205, 125, 50, 25);
+                graphicThread.framePanel.setVisible(true);
+                try {
+                    graphicThread.framePanel.setBackground(Color.RED);
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");            
+                
+            }
+
         }
     }
     //void input
@@ -124,6 +168,7 @@ public class PAR extends Protocol{
         int frame_expected = 0;
   
 	EventTypeEnum event = null; /* filled in by wait, but not used here */
+        JLabel text = new JLabel(String.valueOf(s.ack));
         System.out.println("[RECEIVER] " + "Receiver is waitting for an event...");
 	while (running) {
             
@@ -136,7 +181,7 @@ public class PAR extends Protocol{
             event = null;
             event = wait_for_event_R(event); /* only possibility is frame arrival */
             if(event.equals(EventTypeEnum.FRAME_ARRIVAL)){
-                
+                eventForReceiver = null;
                 r = from_physical_layer(r); /* go get the inbound frame */ //de la capa fisica nos van a pasar el frame
                 if(r.info == null){
                     continue;
@@ -157,37 +202,37 @@ public class PAR extends Protocol{
                 s.ack = 1-frame_expected;
                 to_physical_layer(s); /* send a dummy frame to awaken sender */
                 
+                
+                
                 System.out.println("[RECIEVER] -> Send a frame to confirm"+" - Ack: "+s.ack);
                 System.out.println("[RECEIVER] " + "Receiver is waitting for an event...");
                 
-                
-                Random random = new Random();
                 graphicThread.estado = "abajo";
-                graphicThread.speed = random.nextInt(1) + 100;
+                graphicThread.framePanel.removeAll();
+                text.setText(String.valueOf(s.ack));
+                text.setBounds(0, 0, 40, 20);
+                graphicThread.framePanel.add(text);
+                graphicThread.framePanel.setBackground(new Color(64,207,255));
                 graphicThread.startMyThread();
                 while(graphicThread.execute){
                     try {
-                        texto.setBounds(0, 0, 40, 20);
-                        texto.setText(String.valueOf(s.seq));
-                        graphicThread.framePanel.setBackground(Color.GREEN);
-                        graphicThread.framePanel.add(texto);
-                        graphicThread.framePanel.updateUI(); 
-                        //System.out.println("no frame arrival");
                         sleep(10);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");
-                /*try {
-                    Random random = new Random();
-                    int numeroAleatorio = random.nextInt(15001) + 5000;
-                    sleep(numeroAleatorio);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Utopia.class.getName()).log(Level.SEVERE, null, ex);
-                }*/
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");            
+                eventForReceiver = null;
                 this.eventForSender = EventTypeEnum.FRAME_ARRIVAL;//Set the frame arrival for sender
-            }            
+            }
+            if(this.eventForReceiver == EventTypeEnum.CKSUM_ERR){
+                if(graphicThread.framePanel.getBackground().equals(Color.GREEN)){
+                    graphicThread.framePanel.setBackground(Color.yellow);
+                }
+            }
+            /*else if(event.equals(EventTypeEnum.CKSUM_ERR)){
+                System.out.println("este es el cksum error que le llega al receptor");
+            }*/
 	} 
     }
     

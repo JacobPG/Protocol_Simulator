@@ -12,8 +12,11 @@ import GUI.MyThread;
 import static PROTOCOLS.EventTypeEnum.FRAME_ARRIVAL;
 import static java.lang.Thread.sleep;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 
 /**
  *
@@ -29,9 +32,9 @@ public class Protocol extends Thread{
     int seq_nr;
     Packet packet;
     
-    float errorRate = 0; //from 0 to 1, where 1 all frames will have an error.
+    float errorRate = 0.2f; //from 0 to 1, where 1 all frames will have an error.
     /* time to wait for the confirmation frame from Receiver [in nano-seconds]*/
-    int waitTime = 17000; 
+    public int waitTime = 13000;
    
     public Protocol(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         this.frame = frame;
@@ -150,6 +153,22 @@ public class Protocol extends Thread{
     public Boolean hasAnError(){        
         Random random = new Random();
         return random.nextFloat() < this.errorRate;
+    }
+    public void timerSec(JLabel label){
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+          private int secondsPassed;
+          private JLabel timerLabel = label;
+          @Override
+          public void run() {
+            this.timerLabel.setText("timer: " + String.valueOf(this.secondsPassed));
+            this.secondsPassed++;
+            if(secondsPassed == 60){
+                secondsPassed = 0;
+            }
+          }
+        };
+        timer.schedule(task, 0, 1000);
     }
     
     public void sender(){} //method to sender packets for subprotocols that extend this class
