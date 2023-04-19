@@ -8,10 +8,13 @@ package PROTOCOLS;
 import CONTEXT.Frame;
 import CONTEXT.FrameKindEnum;
 import CONTEXT.Packet;
+import GUI.MyThread;
+import java.awt.Color;
 import static java.lang.Thread.sleep;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 
 /**
  *
@@ -55,13 +58,39 @@ public class SlidingWindow extends Protocol{
         wait_for_frame = System.nanoTime(); //star_timer
         System.out.println("[MACHINE A] " + "MACHINE A is waitting for an event...");
         
+        /*
         try {
             Random random = new Random();
             int numeroAleatorio = random.nextInt(15001) + 5000;
             sleep(numeroAleatorio);
         } catch (InterruptedException ex) {
             Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        JLabel text = new JLabel(String.valueOf(s.seq));
+        graphicThread.estado = "arriba";
+        graphicThread.framePanel.removeAll();
+        text.setText(String.valueOf(s.seq + "-" + s.ack));
+        text.setBounds(0, 0, 40, 20);
+        Random ra = new Random();
+        graphicThread.speed = ra.nextInt(100)+20;
+        graphicThread.framePanel.add(text);
+        graphicThread.framePanel.setBackground(Color.BLUE);
+        graphicThread.startMyThread();
+        while(graphicThread.execute){
+            try {
+                sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        try {
+            graphicThread.framePanel.setBackground(Color.GREEN); 
+            sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo SlidingWindow");            
+        
         
         this.eventForMachineA = null;
         this.eventForMachineB = EventTypeEnum.FRAME_ARRIVAL;//set the frame arrival for receiver
@@ -98,8 +127,50 @@ public class SlidingWindow extends Protocol{
                     wait_for_frame=0;//stop_timer(s.ack)
                     from_network_layer(buffer); //go get something to send
                     next_frame_to_send = (next_frame_to_send==1) ? 0 : 1;//inc
-                }             
+                }              
+            }
+            else if(event.equals(EventTypeEnum.CKSUM_ERR)){
+                graphicThread.finish();
+                graphicThread.framePanel.setBackground(Color.yellow);
+                try {
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setVisible(false);
+                try {
+                    sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setBounds(205, 125, 50, 25);
+                graphicThread.framePanel.setVisible(true);
+                try {
+                    graphicThread.framePanel.setBackground(Color.RED);
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo SlidingWindow");
                 
+            }
+            else if(event.equals(EventTypeEnum.TIMEOUT)){
+                graphicThread.finish();
+                graphicThread.framePanel.setVisible(false);
+                try {
+                    sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setBounds(205, 125, 50, 25);
+                graphicThread.framePanel.setVisible(true);
+                try {
+                    graphicThread.framePanel.setBackground(Color.RED);
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");
             }
             
             s = new Frame();
@@ -114,13 +185,35 @@ public class SlidingWindow extends Protocol{
             wait_for_frame = System.nanoTime(); //star_timer
             System.out.println("[MACHINE A] " + "MACHINE A is waitting for an event...");
             
-            try {
+            /*try {
                 Random random = new Random();
                 int numeroAleatorio = random.nextInt(15001) + 5000;
                 sleep(numeroAleatorio);
             } catch (InterruptedException ex) {
                 Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
+            graphicThread.estado = "arriba";
+            graphicThread.framePanel.removeAll();
+            text.setText(String.valueOf(s.seq + "-" +s.ack));
+            text.setBounds(0, 0, 40, 20);
+            graphicThread.framePanel.add(text);
+            graphicThread.framePanel.setBackground(Color.BLUE);
+            graphicThread.startMyThread();
+            while(graphicThread.execute){
+                try {
+                    sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+            try {
+                graphicThread.framePanel.setBackground(Color.GREEN); 
+                sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo SlidingWindow");
+            
             this.eventForMachineA= null;
             this.eventForMachineB = EventTypeEnum.FRAME_ARRIVAL;//set the frame arrival for receiver
         }
@@ -199,6 +292,49 @@ public class SlidingWindow extends Protocol{
                     next_frame_to_send = (next_frame_to_send==1) ? 0 : 1;//inc
                 }                  
             }
+            else if(event.equals(EventTypeEnum.CKSUM_ERR)){
+                //graphicThread.finish();
+                graphicThread.framePanel.setBackground(Color.yellow);
+                try {
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setVisible(false);
+                try {
+                    sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setBounds(725, 125, 50, 25);
+                graphicThread.framePanel.setVisible(true);
+                try {
+                    graphicThread.framePanel.setBackground(Color.RED);
+                    sleep(2000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo SlidingWindow");
+                
+            }
+            else if(event.equals(EventTypeEnum.TIMEOUT)){
+                graphicThread.finish();
+                graphicThread.framePanel.setVisible(false);
+                try {
+                    sleep(300);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread.framePanel.setBounds(725, 125, 50, 25);
+                graphicThread.framePanel.setVisible(true);
+                try {
+                    graphicThread.framePanel.setBackground(Color.RED);
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo PAR");
+            }
             
             s = new Frame();
             s.info = buffer;
@@ -212,13 +348,38 @@ public class SlidingWindow extends Protocol{
             wait_for_frame = System.nanoTime(); //star_timer
             System.out.println("[MACHINE B] " + "MACHINE B is waitting for an event...");
             
+            /*
             try {
                 Random random = new Random();
                 int numeroAleatorio = random.nextInt(15001) + 5000;
                 sleep(numeroAleatorio);
             } catch (InterruptedException ex) {
                 Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
+            
+            JLabel text = new JLabel(String.valueOf(s.seq));
+            graphicThread.estado = "abajo";
+            graphicThread.framePanel.removeAll();
+            text.setText(String.valueOf(s.seq + "-" +s.ack));
+            text.setBounds(0, 0, 40, 20);
+            graphicThread.framePanel.add(text);
+            graphicThread.framePanel.setBackground(Color.BLUE);
+            graphicThread.startMyThread();
+            while(graphicThread.execute){
+                try {
+                    sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+            try {
+                graphicThread.framePanel.setBackground(Color.GREEN); 
+                sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(PAR.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            graphicThread = new MyThread(graphicThread.speed,graphicThread.protocolPanel,graphicThread.framePanel, "Protocolo SlidingWindow");
+            
             this.eventForMachineB= null;
             this.eventForMachineA = EventTypeEnum.FRAME_ARRIVAL;//set the frame arrival for receiver
         }

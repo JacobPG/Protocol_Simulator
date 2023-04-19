@@ -333,12 +333,12 @@ public class JFrameMain extends javax.swing.JFrame {
         case "Protocolo PAR":
             list = parLabels();
             break;
-//        case "Protocolo SlidingWindow":
-//            return slidingWindowLabels();
-//        case "Protocolo GOBACK":
-//            return goBackLabels();
-//        case "Protocolo SelectiveRepeat":
-//            return selectiveRepeatLabels();
+        case "Protocolo SlidingWindow":
+            return slidingWindowLabels();
+        case "Protocolo GOBACK":
+            return goBackLabels();
+        case "Protocolo SelectiveRepeat":
+            return selectiveRepeatLabels();
         }
         return list;
     }
@@ -450,6 +450,7 @@ public class JFrameMain extends javax.swing.JFrame {
     
     public ArrayList<Component> slidingWindowLabels(){
         ArrayList<Component> labels = new ArrayList<>();
+        labels = (ArrayList<Component>) parLabels().clone();
         return labels;
     }
     public ArrayList<Component> goBackLabels(){

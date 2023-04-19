@@ -36,7 +36,7 @@ public class Protocol extends Thread{
     /* time to wait for the confirmation frame from Receiver [in nano-seconds]*/
     
     //public int waitTime = 13000;
-    public int waitTime = 27000; 
+    public int waitTime = 13000;//27000; 
 
    
     public Protocol(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {

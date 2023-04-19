@@ -74,7 +74,10 @@ public class MyThread extends Thread{
                         protocolPanel.updateUI();
                         break;
                     case "Protocolo SlidingWindow":
-
+                        protocolPanel.remove(framePanel);
+                        moverFrame();
+                        protocolPanel.add(framePanel,0);
+                        protocolPanel.updateUI();
                         break;
                     case "Protocolo GOBACK":
 
