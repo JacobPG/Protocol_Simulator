@@ -34,7 +34,10 @@ public class Protocol extends Thread{
     
     float errorRate = 0.2f; //from 0 to 1, where 1 all frames will have an error.
     /* time to wait for the confirmation frame from Receiver [in nano-seconds]*/
-    public int waitTime = 13000;
+    
+    //public int waitTime = 13000;
+    public int waitTime = 27000; 
+
    
     public Protocol(Frame frame, int MAX_SEQ, EventTypeEnum eventType, int seq_nr, Packet packet) {
         this.frame = frame;
